@@ -11,7 +11,7 @@ import { exec } from "tinyexec";
 import type { Plugin } from "vite";
 import { normalizePath } from "vite";
 
-type Formatter = "biome" | "prettier";
+type Formatter = "biome" | "prettier" | "oxfmt";
 
 interface PluginProps {
   /**
@@ -41,7 +41,7 @@ interface PluginProps {
    */
   fileName?: string;
   /**
-   * What formatter to use to format the generated files. Can be "biome" or "prettier"
+   * What formatter to use to format the generated files. Can be "biome", "prettier", or "oxfmt"
    * @default no formatter
    * @example "biome"
    */
@@ -133,7 +133,7 @@ async function generateSvgSprite({
   outputDirRelative?: string;
   iconNameTransformer?: (fileName: string) => string;
   /**
-   * What formatter to use to format the generated files. Can be "biome" or "prettier"
+   * What formatter to use to format the generated files. Can be "biome", "prettier", or "oxfmt"
    * @default no formatter
    * @example "biome"
    */
@@ -188,7 +188,13 @@ async function lintFileContent(fileContent: string, formatter: Formatter | undef
   }
   const prettierOptions = ["--parser", typeOfFile === "ts" ? "typescript" : "html"];
   const biomeOptions = ["format", "--stdin-file-path", `file.${typeOfFile}`];
-  const options = formatter === "biome" ? biomeOptions : prettierOptions;
+  const oxfmtOptions = ["--stdin-filepath", `file.${typeOfFile === "ts" ? "ts" : "html"}`];
+  const optionsMap: Record<Formatter, string[]> = {
+    prettier: prettierOptions,
+    biome: biomeOptions,
+    oxfmt: oxfmtOptions,
+  };
+  const options = optionsMap[formatter];
 
   const stdinStream = new Readable();
   stdinStream.push(fileContent);
