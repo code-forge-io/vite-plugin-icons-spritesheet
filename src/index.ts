@@ -75,7 +75,8 @@ const generateIcons = async ({
 
   const files = glob.sync("**/*.svg", {
     cwd: inputDir,
-  });
+  }).sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
+  
   if (files.length === 0) {
     console.log(`⚠️  No SVG files found in ${chalk.red(inputDirRelative)}`);
     return;
