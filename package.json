@@ -1,6 +1,6 @@
 {
   "name": "vite-plugin-icons-spritesheet",
-  "version": "3.1.0",
+  "version": "3.0.1",
   "description": "Vite plugin that generates a spritesheet and types out of your icons folder.",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
@@ -47,16 +47,19 @@
     "prepublishOnly": "npm run build",
     "tsc": "tsc",
     "validate": "npm run lint && npm run tsc && npm run test",
+    "changeset": "changeset",
+    "changeset:version": "changeset version && npm install --package-lock-only --ignore-scripts",
+    "changeset:publish": "changeset publish",
     "prepare": "husky"
   },
   "author": "",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/forge42dev/vite-plugin-icons-spritesheet.git"
+    "url": "git+https://github.com/code-forge-io/vite-plugin-icons-spritesheet.git"
   },
   "bugs": {
-    "url": "https://github.com/forge42dev/vite-plugin-icons-spritesheet/issues"
+    "url": "https://github.com/code-forge-io/vite-plugin-icons-spritesheet/issues"
   },
   "files": [
     "dist"
@@ -65,7 +68,7 @@
     ".",
     "test-apps/*"
   ],
-  "homepage": "https://github.com/forge42dev/vite-plugin-icons-spritesheet#readme",
+  "homepage": "https://github.com/code-forge-io/vite-plugin-icons-spritesheet#readme",
   "dependencies": {
     "chalk": "^5.4.1",
     "glob": "^11.0.1",
@@ -76,6 +79,7 @@
     "vite": ">=5.2.0"
   },
   "devDependencies": {
+    "@changesets/cli": "^2.31.0",
     "@types/node": "^22.13.1",
     "@vitest/coverage-v8": "^3.0.5",
     "happy-dom": "^16.8.1",
