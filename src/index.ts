@@ -201,27 +201,33 @@ async function lintFileContent(fileContent: string, formatter: Formatter | undef
   stdinStream.push(fileContent);
   stdinStream.push(null);
 
+  // Note: tinyexec's exec() is used here (not child_process.exec) — it spawns
+  // the formatter binary directly without a shell, so there is no injection risk.
   const { process } = exec(formatter, options, {});
   if (!process?.stdin) {
     return fileContent;
   }
   stdinStream.pipe(process.stdin);
   process.stderr?.pipe(stderr);
-  process.on("error", (err) => {
-    //console.error(`Error running formatter process: ${err.message}`);
-  });
 
   let formattedContent = "";
   process.stdout?.on("data", (data) => {
     formattedContent = formattedContent + data.toString();
   });
   return new Promise<string>((resolve) => {
-    process.on("exit", (code) => {
-      if (code === 0) {
-        resolve(formattedContent);
-      } else {
-        resolve(fileContent);
+    let settled = false;
+    const settle = (value: string) => {
+      if (!settled) {
+        settled = true;
+        resolve(value);
       }
+    };
+    process.on("error", (err) => {
+      console.warn(`[icons-spritesheet] formatter "${formatter}" could not be started: ${err.message}`);
+      settle(fileContent);
+    });
+    process.on("exit", (code) => {
+      settle(code === 0 ? formattedContent : fileContent);
     });
   });
 }
